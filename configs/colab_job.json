@@ -1,0 +1,14 @@
+{
+  "job_name": "sillok_100m_t4_pretrain",
+  "config": "configs/sillok_120m_t4.yaml",
+  "drive_ckpt_dir": "/content/drive/MyDrive/sillok_lm/checkpoints/sillok_100m_t4",
+  "max_steps": 15000,
+  "no_compile": false,
+  "generate_after_train": true,
+  "sample_prompt": {
+    "king": "태조실록(太祖實錄)",
+    "date": "태조 1년 7월 17일 | 1392-07-17L0 | 丙申",
+    "title_ko": "태조가 수창궁에서 왕위에 오르다",
+    "mode": "hanja"
+  }
+}

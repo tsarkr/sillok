@@ -1,0 +1,33 @@
+# Byte-compiled / Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Raw data & large generated artifacts
+data/*.xml
+data/*.dtd
+data/*.jpg
+data/*.png
+data/processed/
+data/sample_processed/
+artifacts/
+checkpoints/
+*.bin
+*.pt
+*.safetensors
+*.jsonl
+
+# Logs & tracking
+logs/
+wandb/
+.ipynb_checkpoints/
+.DS_Store
