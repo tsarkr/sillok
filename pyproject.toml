@@ -22,3 +22,6 @@ logging = ["wandb>=0.16.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.vercel]
+entrypoint = "index.py"
