@@ -131,6 +131,15 @@ tags:
 - causal-lm
 - sillok
 - llama
+- 조선왕조실록
+- 실록
+- 조선
+- 한국사
+- 고문헌
+- 한문
+- 사관
+- 국사편찬위원회
+- 한국학
 pipeline_tag: text-generation
 ---
 
