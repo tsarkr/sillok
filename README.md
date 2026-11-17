@@ -5,9 +5,9 @@
 [![GitHub](https://img.shields.io/badge/GitHub-tsarkr%2Fsillok-black)](https://github.com/tsarkr/sillok)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftsarkr%2Fsillok)
 
-* **Vercel 원클릭 배포**: 상단 `Deploy with Vercel` 버튼 클릭 시 웹 스튜디오를 즉시 개인 Vercel 도메인에 호스팅
+* **공식 웹 사관 스튜디오 (Vercel Live)**: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/)
 * **Hugging Face 모델 허브**: [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m)
-* **웹 사관 스튜디오 (실시간 데모)**: [https://reg-township-clan-founded.trycloudflare.com/studio](https://reg-township-clan-founded.trycloudflare.com/studio)
+* **Vercel 원클릭 배포**: 상단 `Deploy with Vercel` 버튼 클릭 시 웹 스튜디오를 즉시 개인 Vercel 도메인에 호스팅
 * **원천 데이터셋**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673`개 파일 · `30`개 실록 · `381,701`개 기사 · 한문 `67,707,578`자 · 공공누리 제1유형/AI유형)
 
 본 프로젝트는 위 데이터를 바탕으로 **Llama-3 스타일 Decoder-only Transformer (`SillokForCausalLM`)**를 PyTorch 기반 From Scratch로 학습하며, **로컬/에지 SSH 서버(`tsarkr`) + Cloudflare Tunnel (`localhost:8000`) + Google Colab Pro (A100 GPU)** 3계층 워크플로우로 설계·구축되었습니다.
