@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     return res.status(204).end();
   }
 
-  const backend = (process.env.SILLOK_BACKEND_URL || 'https://reg-township-clan-founded.trycloudflare.com').replace(/\/$/, '');
+  const backend = (process.env.SILLOK_BACKEND_URL || 'https://preferred-brochure-physical-conditions.trycloudflare.com').replace(/\/$/, '');
 
   try {
     const response = await fetch(`${backend}/api/status`);
