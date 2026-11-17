@@ -1,0 +1,13 @@
+# Prevent Vercel from detecting Python backend framework
+requirements.txt
+pyproject.toml
+src/
+data/
+scripts/
+notebooks/
+docs/
+configs/
+artifacts/
+checkpoints/
+logs/
+tests/
