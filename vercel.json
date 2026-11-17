@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "sillok-studio",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/api/generate", "destination": "/api/generate.js" },
+    { "source": "/api/status", "destination": "/api/status.js" },
+    { "source": "/(.*)", "destination": "/public/$1" }
+  ]
+}

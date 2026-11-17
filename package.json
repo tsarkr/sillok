@@ -1,0 +1,16 @@
+{
+  "name": "sillok-studio",
+  "version": "1.0.0",
+  "description": "Digital Chunchugwan Web Studio for Sillok-LM",
+  "scripts": {
+    "start": "python3 scripts/11_serve_web_studio.py"
+  },
+  "keywords": [
+    "sillok",
+    "joseon",
+    "llm",
+    "korean-history"
+  ],
+  "author": "Gyungmin Jo",
+  "license": "Apache-2.0"
+}
