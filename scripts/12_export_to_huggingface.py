@@ -124,15 +124,13 @@ def _build_readme(repo_id: str, best_val_loss: float, global_step: int) -> str:
 language:
 - ko
 - lzh
-license: cc-by-4.0
+license: apache-2.0
 tags:
 - historical
 - joseon-dynasty
 - causal-lm
 - sillok
 - llama
-datasets:
-- National Institute of Korean History (Veritable Records of the Joseon Dynasty)
 pipeline_tag: text-generation
 ---
 
@@ -208,6 +206,7 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=False))
 
 ## 4. 라이선스 및 크레딧 (License & Citation)
 
+* **라이선스**: Apache 2.0 (출처 표기 시 학술 연구 및 상업적 자유 이용 가능)
 * **원천 데이터**: 국사편찬위원회_조선왕조실록 정보_실록원문 (공공누리 제1유형 / AI 학습용)
 * **저작권 및 배포**: 조경민 (Gyungmin Jo / darkstar-11e)
 * **GitHub Repository**: [https://github.com/tsarkr/sillok](https://github.com/tsarkr/sillok)

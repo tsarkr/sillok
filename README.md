@@ -1,6 +1,12 @@
 # Sillok-LM: 조선왕조실록 From Scratch 생성형 언어모델
 
-**원천 데이터셋**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673`개 파일 · `30`개 실록 · `381,701`개 기사 · 한문 `67,707,578`자 · 공공누리 제1유형/AI유형)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-darkstar--11e%2Fsillok--100m-yellow)](https://huggingface.co/darkstar-11e/sillok-100m)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GitHub](https://img.shields.io/badge/GitHub-tsarkr%2Fsillok-black)](https://github.com/tsarkr/sillok)
+
+* **Hugging Face 모델 허브**: [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m)
+* **웹 사관 스튜디오 (실시간 데모)**: [https://reg-township-clan-founded.trycloudflare.com/studio](https://reg-township-clan-founded.trycloudflare.com/studio)
+* **원천 데이터셋**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673`개 파일 · `30`개 실록 · `381,701`개 기사 · 한문 `67,707,578`자 · 공공누리 제1유형/AI유형)
 
 본 프로젝트는 위 데이터를 바탕으로 **Llama-3 스타일 Decoder-only Transformer (`SillokForCausalLM`)**를 PyTorch 기반 From Scratch로 학습하며, **로컬/에지 SSH 서버(`tsarkr`) + Cloudflare Tunnel (`localhost:8000`) + Google Colab Pro (A100 GPU)** 3계층 워크플로우로 설계·구축되었습니다.
 
