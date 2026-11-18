@@ -340,7 +340,8 @@ class SillokPretrainer:
                 t0 = time.perf_counter()
                 print(
                     f"step={self.global_step:06d}/{cfg.max_steps:06d} "
-                    f"loss={last_loss:.4f} lr={lr:.3e} tok/s={tok_per_sec:,.0f}"
+                    f"loss={last_loss:.4f} lr={lr:.3e} tok/s={tok_per_sec:,.0f}",
+                    flush=True,
                 )
                 if wandb_run is not None:
                     wandb_run.log({"train/loss": last_loss, "train/lr": lr, "perf/tok_s": tok_per_sec}, step=self.global_step)
