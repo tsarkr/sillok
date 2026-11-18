@@ -6,6 +6,7 @@
   "outputDirectory": "public",
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/search", "destination": "/api/search.js" },
     { "source": "/api/generate", "destination": "/api/generate.js" },
     { "source": "/api/status", "destination": "/api/status.js" }
   ]
