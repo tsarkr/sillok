@@ -124,6 +124,7 @@ def _build_readme(repo_id: str, best_val_loss: float, global_step: int) -> str:
 language:
 - ko
 - lzh
+- en
 license: apache-2.0
 tags:
 - historical
@@ -131,6 +132,8 @@ tags:
 - causal-lm
 - sillok
 - llama
+- digital-humanities
+- classical-chinese
 - 조선왕조실록
 - 실록
 - 조선
@@ -141,30 +144,70 @@ tags:
 - 국사편찬위원회
 - 한국학
 pipeline_tag: text-generation
+widget:
+- text: "<|bos|><|king|>세종실록(世宗實錄)<|date|>세종 28년 9월 29일 | 庚戌<|subject|>문화-출판/인쇄<|title|>어제 훈민정음 서책을 완성하여 인쇄하게 하다<|hanja|>"
+  example_title: "세종 28년 훈민정음 반포 (Sejong Hangul Proclamation)"
+- text: "<|bos|><|king|>태조실록(太祖實錄)<|date|>태조 1년 7월 17일 | 丙申<|subject|>왕실-국왕/임면<|title|>태조가 수창궁에서 왕위에 오르다<|hanja|>"
+  example_title: "태조 1년 수창궁 즉위 (Taejo Accession)"
+- text: "<|bos|><|king|>선조실록(宣祖實錄)<|date|>선조 25년 4월 13일 | 壬辰<|subject|>군사-전쟁/방비<|title|>왜적이 부산포에 침입하여 전란이 시작되다<|hanja|>"
+  example_title: "선조 25년 임진왜란 발발 (Imjin War)"
 ---
 
-# {repo_id.split('/')[-1]} — 조선왕조실록 인과적 언어모델 (Sillok-LM 100M)
+# Sillok-LM 100M: Causal Language Model for the Annals of the Joseon Dynasty
+### 조선왕조실록 인과적 언어모델 (Sillok-LM 100M)
 
-국사편찬위원회 조선왕조실록 원문 XML(30종 실록, 381,701개 기사, 한문 6,770만 자)을 전수 학습한 고문헌 특화 Decoder-only 언어모델입니다.
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GitHub](https://img.shields.io/badge/GitHub-tsarkr%2Fsillok-black)](https://github.com/tsarkr/sillok)
+[![Live Web Studio](https://img.shields.io/badge/%F0%9F%8F%9B%EF%B8%8F%20Web%20Studio-sillok.tsar.kr-red)](https://sillok.tsar.kr)
 
-- **아키텍처**: LLaMA-3 Style Decoder-only Transformer (RoPE, GQA, SwiGLU, RMSNorm)
-- **파라미터 수**: 100,682,496 (100.7M)
-- **학습 스텝**: {global_step:,} steps (~12.1 epochs, 7.6억 토큰 완독)
-- **최적 검증 손실(Validation Loss)**: {best_val_loss:.4f} (Perplexity: 18.41, Top-1 Accuracy: 48.71%)
-- **토크나이저**: 32,768 어휘의 고문헌 특화 한자·한글 Byte-Level BPE (SentencePiece)
-- **연구/개발**: 조경민 (Gyungmin Jo / 한국학중앙연구원 디지털인문학연구소 AKS-DHLAB)
+> **[ 🌐 English Model Card ](#-english-model-card)** | **[ 🇰🇷 한국어 모델 설명 ](#-한국어-모델-설명)**
 
----
-
-## 1. 모델 개요 및 목적 (Model Purpose)
-
-1. **사료 결락 복원 (Historical Text Imputation)**: 훼손되거나 망실된 실록 기사의 원문 문맥 추정
-2. **연대·왕명별 양식 모사 (Stylistic Generation)**: 태조~순종 30대 국왕별 문체 및 시대별 간지(干支) 표기 생성
-3. **디지털 사관 사론 생성 (Historiographical Commentary)**: 실록 기사 말미 사관의 논평(`<|postscript|>`) 생성
+* **Official Interactive Web Studio**: [https://sillok.tsar.kr](https://sillok.tsar.kr) (Mirror: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/))
+* **GitHub Repository**: [https://github.com/tsarkr/sillok](https://github.com/tsarkr/sillok)
+* **Primary Source Data**: National Institute of Korean History (NIKH, 국사편찬위원회) — 673 XML volumes, 30 monarchs, 381,701 articles, 67,707,578 Classical Chinese characters (KOGL Type 1 / AI License).
 
 ---
 
-## 2. 사용 방법 (Quickstart with Hugging Face Transformers)
+# 🌐 English Model Card
+
+## 1. Model Summary
+
+**Sillok-LM (100.7M parameters)** is a decoder-only causal language model trained entirely from scratch on the complete digital corpus of the **Annals of the Joseon Dynasty** (*Joseon Wangjo Sillok*, 1392–1863). 
+
+Constructed with a modern **Llama-3 architecture** (RoPE, GQA, SwiGLU, RMSNorm), Sillok-LM is tailored for digital humanities research, historical text imputation, and stylistic generation of Classical Chinese historiography.
+
+### Model Architecture & Specs
+- **Model Type**: Llama-3 Style Decoder-only Transformer (`LlamaForCausalLM` compatible)
+- **Parameters**: 100,682,496 (100.7M)
+- **Layers**: 12 | **Hidden Dim**: 768 | **Intermediate Dim**: 2,048
+- **Attention Heads**: 12 | **Key-Value Heads**: 4 (Grouped-Query Attention)
+- **Max Sequence Length**: 1,024 tokens | **RoPE Base Frequency (theta)**: 500,000.0
+- **Tokenizer**: 32,768 vocabulary custom Byte-Level BPE (specialized for Hanja & Hangul)
+- **Training Steps**: {global_step:,} steps (~12.1 epochs over 760M tokens)
+- **Validation Loss**: {best_val_loss:.4f} (Perplexity: 18.41, Top-1 Accuracy: 48.71%)
+- **Precision**: FP16 / BF16 safetensors
+- **Author & Research**: Gyungmin Jo (조경민 / Academy of Korean Studies AKS-DHLAB)
+
+---
+
+## 2. Historiographical Foundations & Innovations
+
+### ① Cross-Lingual Bi-Directional Modeling
+- **The Nature of Article Titles**: The original woodblock prints of the Annals contained **no headlines**. All article titles (`<mainTitle>`) in the corpus were curated by modern historians at the National Institute of Korean History (NIKH) during national digitization projects.
+- Consequently, Sillok-LM functions as a neural cross-lingual bridge between 15th–19th century Classical Chinese annals and modern Korean scholarly briefing:
+  - **Forward Drafting (`<|title|>... ➔ <|hanja|>...`)**: Given a monarch, date, and modern title, generates an authentic Classical Chinese chronological entry.
+  - **Reverse Summarization (`<|hanja|>... ➔ <|title|>...`)**: Given raw Classical Chinese text, extracts a professional, archival-grade modern Korean title.
+
+### ② Historiographer Editorial Commentary (*Saron*, 史論)
+- In traditional Confucian historiography (*Chunqiu Chunqiu-pilbeop*), royal chroniclers appended moral and political verdicts (`【史臣曰: "..."】`).
+- Exactly **5,873 instances** of official `<postScript type="史論">` tags were extracted from NIKH XML standards and trained using the `<|postscript|>` control token.
+
+### ③ Chronological Date Context Hierarchy (Tree Inheritance)
+- Reflecting authentic Annals historiography (where the 60-Ganji cyclical day marker is stated only on the day's first entry), our parser implemented strict DOM tree context inheritance (`level2(Year) ➔ level3(Month) ➔ level4(Day) ➔ level5(Article)`), eliminating cross-day date contamination.
+
+---
+
+## 3. Quickstart with Hugging Face Transformers
 
 ```python
 import torch
@@ -179,16 +222,15 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 )
 
-# 세종실록 훈민정음 반포 기사 프롬프트
-prompt = "[세종실록 25년 12월 30일 庚辰] <|title|> 훈민정음을 창제하다 <|hanja|>"
-inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+# 1. Forward Annals Generation: King Sejong promulgating the Korean Alphabet (Hangul)
+prompt = "<|bos|><|king|>세종실록(世宗實錄)<|date|>세종 28년 9월 29일 | 庚戌<|subject|>문화-출판/인쇄<|title|>어제 훈민정음 서책을 완성하여 인쇄하게 하다<|hanja|>"
 
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 with torch.no_grad():
     outputs = model.generate(
         **inputs,
-        max_new_tokens=256,
-        temperature=0.8,
-        top_p=0.9,
+        max_new_tokens=60,
+        temperature=0.6,
         repetition_penalty=1.15,
         do_sample=True,
     )
@@ -198,27 +240,60 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=False))
 
 ---
 
-## 3. 프롬프트 표준 구조 (Special Tokens)
+## 4. Prompt Control Tokens
 
-모델은 실록의 엄밀한 서지 메타데이터 구조를 따릅니다:
+The model respects the structured bibliographic schema of the Annals:
 
 ```text
-[왕명 재위년 월 일 간지] <|subject|> 주제 <|title|> 기사제목 <|hanja|> 한문원문 <|postscript|> 사론
+<|bos|><|king|>King<|date|>Date<|subject|>Subject<|title|>Title<|hanja|>Body<|postscript|>Commentary<|eos|>
 ```
 
-* `<|king|>`: 국왕 식별 토큰
-* `<|date|>`: 재위 연월일 및 일진 간지
-* `<|subject|>`: 12대 역사 주제 분류 (정치/국정, 외교, 군사, 천문 등)
-* `<|title|>`, `<|hanja|>`, `<|ko|>`, `<|postscript|>`: 기사 구성 제어 토큰
+| Token | Description | Example |
+| :--- | :--- | :--- |
+| `<|king|>` | King Annals Identifier | `세종실록(世宗實錄)`, `태조실록(太祖實錄)` |
+| `<|date|>` | Reign Year, Month, Day, and 60-Ganji | `세종 28년 9월 29일 | 庚戌` |
+| `<|subject|>` | 12 Historiographical Subject Classes | `문화-출판/인쇄`, `군사-전쟁/방비`, `왕실-국왕/임면` |
+| `<|title|>` | Modern Korean Scholarly Summary Title | `어제 훈민정음 서책을 완성하여 인쇄하게 하다` |
+| `<|hanja|>` | Classical Chinese Authentic Annals Text | `○庚戌/傳旨: ...` |
+| `<|postscript|>` | Historiographer Moral Verdict (*Saron*) | `【史臣曰: "..."】` |
 
 ---
 
-## 4. 라이선스 및 크레딧 (License & Citation)
+## 5. Interactive Web Studio (`https://sillok.tsar.kr`)
 
-* **라이선스**: Apache 2.0 (출처 표기 시 학술 연구 및 상업적 자유 이용 가능)
-* **원천 데이터**: 국사편찬위원회_조선왕조실록 정보_실록원문 (공공누리 제1유형 / AI 학습용)
-* **저작권 및 배포**: 조경민 (Gyungmin Jo / darkstar-11e)
-* **GitHub Repository**: [https://github.com/tsarkr/sillok](https://github.com/tsarkr/sillok)
+Experience the model directly in your browser:
+- **Native `<ruby>` Phonetic Viewer**: Renders phonetic Hangul readings above Classical Chinese characters with toggleable display modes.
+- **3-Line Modern Story Briefing**: Automatic breakdown into historical context, court debate, and outcome.
+- **Historiographical Verdict Card**: Stylized Confucian commentary card.
+- **Joseon Government Glossary**: Instant definitions for historical government offices (*Uijeongbu*, *Yukjo*, *Seungjeongwon*).
+
+---
+
+# 🇰🇷 한국어 모델 설명
+
+국사편찬위원회 조선왕조실록 원문 XML(30종 실록, 381,701개 기사, 한문 6,770만 자)을 전수 학습한 고문헌 특화 Decoder-only 언어모델입니다.
+
+- **아키텍처**: LLaMA-3 Style Decoder-only Transformer (RoPE, GQA, SwiGLU, RMSNorm)
+- **파라미터 수**: 100,682,496 (100.7M)
+- **학습 스텝**: {global_step:,} steps (~12.1 epochs, 7.6억 토큰 완독)
+- **최적 검증 손실(Validation Loss)**: {best_val_loss:.4f} (Perplexity: 18.41, Top-1 Accuracy: 48.71%)
+- **토크나이저**: 32,768 어휘의 고문헌 특화 한자·한글 Byte-Level BPE (SentencePiece)
+- **연구/개발**: 조경민 (Gyungmin Jo / 한국학중앙연구원 디지털인문학연구소 AKS-DHLAB)
+
+### 주요 연구 및 활용 목적
+1. **사료 결락 복원 (Historical Text Imputation)**: 훼손되거나 망실된 실록 기사의 원문 문맥 추정
+2. **연대·왕명별 양식 모사 (Stylistic Generation)**: 태조~순종 30대 국왕별 문체 및 시대별 간지(干支) 표기 생성
+3. **디지털 사관 사론 생성 (Historiographical Commentary)**: 실록 기사 말미 사관의 논평(`<|postscript|>`) 생성
+4. **역방향 국역 요약 (Reverse Title Extraction)**: 한문 사초 입력 시 국사편찬위원회 스타일의 한글 1줄 요약 제목 추출
+
+---
+
+## 📜 라이선스 및 데이터 출처 (License & Citation)
+
+- **License**: [Apache License 2.0](https://opensource.org/licenses/Apache-2.0)
+- **Primary Source Data**: 국사편찬위원회 조선왕조실록 원문 (공공누리 제1유형 / AI 학습용 준수)
+- **Official Web Studio**: [https://sillok.tsar.kr](https://sillok.tsar.kr)
+- **GitHub**: [https://github.com/tsarkr/sillok](https://github.com/tsarkr/sillok)
 """
 
 
