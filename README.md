@@ -1,17 +1,22 @@
 # Sillok-LM: 조선왕조실록 From Scratch 생성형 언어모델
+### From-Scratch Causal Language Model for the Annals of the Joseon Dynasty
 
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-darkstar--11e%2Fsillok--100m-yellow)](https://huggingface.co/darkstar-11e/sillok-100m)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![GitHub](https://img.shields.io/badge/GitHub-tsarkr%2Fsillok-black)](https://github.com/tsarkr/sillok)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftsarkr%2Fsillok)
 
-* **공식 웹 사관 스튜디오**: [https://sillok.tsar.kr](https://sillok.tsar.kr) (보조 미러: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/))
-* **Hugging Face 모델 허브**: [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (LlamaForCausalLM 규격)
-* **원천 데이터셋**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673`개 파일 · `30`개 실록 · `381,701`개 기사 · 한문 `67,707,578`자 · 공공누리 제1유형/AI유형)
+> **[ 🌐 English Documentation ](#-english-documentation)** | **[ 🇰🇷 한국어 설명 ](#-한국어-설명)**
 
-본 프로젝트는 국사편찬위원회의 조선왕조실록 원전 빅데이터를 기반으로 **Llama-3 아키텍처 기반 Decoder-only Transformer (`SillokForCausalLM`, 100.7M 파라미터)**를 밑바닥부터(From Scratch) 학습하고, 누구나 한자 부담 없이 실록을 즐길 수 있도록 대중 친화 웹 스튜디오와 무인 자율 복구 클라우드 GPU 인프라를 구축한 디지털 인문학 AI 프로젝트입니다.
+* **공식 웹 사관 스튜디오 (Official Web Studio)**: [https://sillok.tsar.kr](https://sillok.tsar.kr) (Mirror: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/))
+* **Hugging Face 모델 허브 (Model Hub)**: [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (`LlamaForCausalLM` safetensors)
+* **원천 데이터셋 (Primary Source)**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673` files · `30` annals · `381,701` articles · `67,707,578` Classical Chinese characters · KOGL Type 1 / AI License)
 
 ---
+
+# 🇰🇷 한국어 설명
+
+국사편찬위원회의 조선왕조실록 원전 빅데이터를 기반으로 **Llama-3 아키텍처 기반 Decoder-only Transformer (`SillokForCausalLM`, 100.7M 파라미터)**를 밑바닥부터(From Scratch) 학습하고, 누구나 한자 부담 없이 실록을 즐길 수 있도록 대중 친화 웹 스튜디오와 무인 자율 복구 클라우드 GPU 인프라를 구축한 디지털 인문학 AI 프로젝트입니다.
 
 ## 🌟 핵심 특징 (Key Highlights)
 
@@ -59,8 +64,6 @@ flowchart LR
 
 ## 📚 교육용 교재 및 기술 문서 (`docs/`)
 
-인문학 전공 학생과 연구자가 기초부터 실전까지 따라갈 수 있도록 정리한 기술 백서입니다:
-
 - **[단행본 통합 교재 (전체 합본)](file:///home/nsua/Dev/sillok/docs/BOOK_SILLOK_LM_COMPLETE.md)** — 데이터 정제, 토크나이저 주조, Transformer 신경망 설계, 원격 GPU 무인 자동화, 30대 실록 통계 및 대중 친화 UI 아키텍처를 총망라한 통합 도서
 - **[서문 및 총괄 색인](file:///home/nsua/Dev/sillok/docs/00_BOOK_INDEX.md)** — 목차 구성, 실측 수치 요약, 전체 파일 인덱스
 - **[제1장. 원천 데이터 규격 및 XML 파싱 명세](file:///home/nsua/Dev/sillok/docs/01_DATA_AND_XML_SPEC.md)** — `history.dtd ver 1.4`, 30개 실록 통계표, UTF-16 서로게이트 복구, 계층 날짜 상속, 사론(`<postScript>`) 분리
@@ -94,7 +97,8 @@ sillok/
 │   ├── 09_export_infer.py          # 1.2GB 가중치를 240MB FP16 infer.pt로 경량 추출
 │   ├── 10_interactive_cli.py       # 번호 선택식 대화형 터미널 사관 스튜디오
 │   ├── 11_serve_web_studio.py      # 로컬 상주형 웹 스튜디오 서버 (:8020)
-│   └── 12_export_to_huggingface.py # Hugging Face LlamaForCausalLM safetensors 변환기
+│   ├── 12_export_to_huggingface.py # Hugging Face LlamaForCausalLM safetensors 변환기
+│   └── colab_studio_server.py      # 클라우드 GPU 상주형 고속 REST API 서버
 ├── src/sillok/
 │   ├── constants.py                # 30종 국왕 코드 매핑, 11종 제어 특수 토큰
 │   ├── data/                       # xml_parser.py, formatting.py, dataset.py
@@ -111,16 +115,69 @@ sillok/
 
 ---
 
-## 🚀 빠른 시작 (Quick Start)
+# 🌐 English Documentation
 
-### 1. Python 환경 설정 및 라이브러리 설치
+**Sillok-LM** is a causal language model (100.7M parameters) built from scratch upon the complete corpus of the **Annals of the Joseon Dynasty** (*Joseon Wangjo Sillok*, 1392–1863), published by the National Institute of Korean History (NIKH). 
+
+Designed with modern **Llama-3 Transformer architecture**, Sillok-LM bridges premodern Classical Chinese historiography and modern Korean historical inquiry. It is served through a zero-downtime, autonomous hybrid cloud infrastructure with an accessible, student-friendly interactive web studio.
+
+## 🌟 Key Innovations & Historiographical Rigor
+
+### 1. Cross-Lingual Bi-Directional Modeling
+- **The Nature of Article Titles**: The original woodblock and manuscript editions of the Annals contain **no article headlines**. The Korean titles in the XML corpus (`<mainTitle>`) are authoritative 1-line event summaries curated by modern historians at the NIKH during digitalization.
+- **Bi-Directional Learning Mechanism**:
+  - **Forward Historiographical Generation (`<|title|>Modern_Korean_Title ➔ <|hanja|>Classical_Chinese_Annals`)**: Given a historical monarch, date, and modern Korean title, the model drafts the authentic chronological Annals entry in the exact prose style of contemporary Joseon historiographers.
+  - **Reverse Historical Summarization (`<|hanja|>Classical_Chinese_Entry ➔ <|title|>Modern_Korean_Title`)**: Given an unannotated Classical Chinese passage, the model extracts a concise, academic modern Korean title matching the style of professional NIKH archivists.
+
+### 2. Strict Historical & XML Standards Compliance
+- **Official Editorial Verdict Extraction (`<postScript type="史論">`)**: The evaluative commentaries of Joseon royal historiographers (*Saron*, starting with `【史臣曰: "..."】`) were systematically separated from the main body. Exactly **5,873 instances** defined under the NIKH `history.dtd` standard were parsed and modeled with the dedicated control token `<|postscript|>`.
+- **Chronological Date Context Hierarchy (Tree Inheritance)**: In authentic Annals historiography, the 60-Ganji cyclical date is explicitly stated only at the first article of each day; subsequent articles on the same day omit the date. The parser respects this domain rule via XML DOM tree context inheritance (`level2(Year) ➔ level3(Month) ➔ level4(Day) ➔ level5(Article)`), preventing inter-day date contamination.
+
+### 3. 🌱 Public & Student-Friendly Web Studio (`sillok.tsar.kr`)
+- **Native Ruby Phonetic Viewer (`<ruby>`)**: Automatically renders native HTML `<ruby>` annotations displaying phonetic Hangul readings above each Classical Chinese character, with one-click toggles:
+  - `[Show Reading (Ruby)]`: Hanja with Hangul ruby readings
+  - `[Hangul Only]`: Pure Korean reading mode
+  - `[Hanja Only]`: Traditional Classical Chinese view
+- **3-Line Modern Story Briefing**: Automatically breaks down generated entries into historical context, court debate/action, and long-term consequence.
+- **Historiographer Verdict Card (*Saron*)**: Highlights the ethical and political verdict of the royal chronicler in a traditional seal-styled card.
+- **Historical Glossary Chips**: Dynamically surfaces definitions for premodern government offices and court terminology (e.g., State Council *Uijeongbu*, Royal Secretariat *Seungjeongwon*, Six Ministries).
+
+---
+
+## 🏛️ Autonomous Infrastructure Architecture
+
+```mermaid
+flowchart LR
+    User["Web Browser Users\n(Global / Mobile)"] -->|"HTTPS"| Vercel["Vercel Serverless Gateway & Static CDN\n(https://sillok.tsar.kr)"]
+    Vercel -->|"Private Tunnel Relay"| CF["Cloudflare Named Tunnel\n(Private Dedicated Backend)"]
+    CF -->|"Permanent Token"| GPU["Google Colab Cloud GPU\n(NVIDIA L4 24GB VRAM)"]
+    
+    subgraph EdgeHost["Local Edge Machine (tsarkr - 0% Inference Burden)"]
+        Healer["Autonomous Supervisor\n(sillok-healer.service, RAM 2MB)"]
+    end
+    
+    Healer -.->|"90s Healthcheck Loop\nRemote Zero-Touch Recovery"| GPU
+```
+
+1. **Global Frontend**: Hosted on Vercel Serverless CDN with custom domain ([https://sillok.tsar.kr](https://sillok.tsar.kr)).
+2. **Private Tunnel Backbone**: Routed through a permanent Cloudflare Named Tunnel token, shielding the backend from direct internet exposure.
+3. **GPU Compute**: Accelerated on Google Colab with NVIDIA L4 (24GB VRAM) executing FP16 inference.
+4. **24/7 Self-Healing Daemon (`sillok-healer.service`)**: A lightweight systemd user service (2MB RAM, 0% CPU on local edge host) that inspects backend health every 90 seconds and autonomously relaunches the Colab L4 runtime and tunnel upon session expiration.
+
+---
+
+## 🚀 Quick Start (Inference & Usage)
+
+### 1. Installation
 ```bash
 git clone https://github.com/tsarkr/sillok.git
 cd sillok
 pip install -e .
 ```
 
-### 2. Hugging Face 사전학습 모델 즉시 추론
+### 2. Hugging Face Inference
+The weights are available publicly on the Hugging Face Hub as standard `LlamaForCausalLM`:
+
 ```python
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -129,24 +186,29 @@ model_id = "darkstar-11e/sillok-100m"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="auto")
 
-# 편년체 제어 프롬프트 조립
+# Chronological Annals control prompt
 prompt = "<|bos|><|king|>세종실록(世宗實錄)<|date|>세종 28년 9월 29일 | 庚戌<|subject|>문화-출판/인쇄<|title|>어제 훈민정음 서책을 완성하여 인쇄하게 하다<|hanja|>"
 
 inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-outputs = model.generate(**inputs, max_new_tokens=60, temperature=0.6, repetition_penalty=1.15)
+outputs = model.generate(
+    **inputs,
+    max_new_tokens=60,
+    temperature=0.6,
+    repetition_penalty=1.15
+)
 print(tokenizer.decode(outputs[0], skip_special_tokens=False))
 ```
 
-### 3. 번호 선택형 대화형 CLI 사관 실행
+### 3. Interactive CLI Studio
 ```bash
 python3 scripts/10_interactive_cli.py
-# 1~10번 역사 프리셋 선택 또는 30대 국왕 / 60간지 직접 지정 생성
+# Select presets (1-10) or configure custom reign year, 60-Ganji, and subject
 ```
 
 ---
 
-## 📜 라이선스 및 데이터 출처 표기
+## 📜 License & Citation
 
-- **소스코드 라이선스**: [Apache License 2.0](LICENSE)
-- **원천 데이터**: 교육부 국사편찬위원회 조선왕조실록 원문 (공공누리 제1유형: 출처표시 및 공공누리 AI유형 준수)
-- **배포 모델 가중치**: [darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (Apache-2.0, 상업적·학술적 자유 이용 가능)
+- **Source Code**: [Apache License 2.0](LICENSE)
+- **Primary Source Data**: National Institute of Korean History (NIKH), Ministry of Education, Republic of Korea (KOGL Type 1 & AI Compliant)
+- **Model Checkpoints**: [darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (Apache-2.0, free for academic & commercial use)
