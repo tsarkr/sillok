@@ -5,8 +5,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-tsarkr%2Fsillok-black)](https://github.com/tsarkr/sillok)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftsarkr%2Fsillok)
 
-* **공식 웹 사관 스튜디오 (Vercel Live)**: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/)
-* **영구 백엔드 API (Cloudflare Named Tunnel)**: [https://api-sillok.tsar.kr](https://api-sillok.tsar.kr)
+* **공식 웹 사관 스튜디오**: [https://sillok.tsar.kr](https://sillok.tsar.kr) (보조 미러: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/))
 * **Hugging Face 모델 허브**: [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (LlamaForCausalLM 규격)
 * **원천 데이터셋**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673`개 파일 · `30`개 실록 · `381,701`개 기사 · 한문 `67,707,578`자 · 공공누리 제1유형/AI유형)
 
@@ -40,8 +39,8 @@
 
 ```mermaid
 flowchart LR
-    User["웹 브라우저 사용자\n(PC / 모바일)"] -->|"접속"| Vercel["Vercel 프론트엔드\n(sillok-blue.vercel.app)"]
-    Vercel -->|"REST API 호출"| CF["Cloudflare Named Tunnel\n(https://api-sillok.tsar.kr)"]
+    User["웹 브라우저 사용자\n(sillok.tsar.kr)"] -->|"접속 및 요청"| Vercel["Vercel 프론트엔드 & 보안 프록시\n(https://sillok.tsar.kr)"]
+    Vercel -->|"비공개 내부 터널 중계"| CF["Cloudflare Named Tunnel\n(비공개 전용 백엔드)"]
     CF -->|"영구 불변 토큰 직결"| GPU["Google Colab 클라우드 GPU\n(NVIDIA L4 24GB VRAM)"]
     
     subgraph EdgeHost["로컬 에지 호스트 (tsarkr - 0% 연산 부하)"]
@@ -51,8 +50,8 @@ flowchart LR
     Healer -.->|"90초 주기 헬스체크\n세션 끊김 감지 시 자동 원격 재기동"| GPU
 ```
 
-1. **프론트엔드**: Vercel Serverless를 통한 글로벌 CDN 정적 호스팅 ([sillok-blue.vercel.app](https://sillok-blue.vercel.app/))
-2. **영구 고정 백엔드**: Cloudflare Named Tunnel 공식 토큰을 바인딩한 고정 도메인 ([https://api-sillok.tsar.kr](https://api-sillok.tsar.kr))
+1. **공식 웹 서비스**: 커스텀 도메인 연동 및 Vercel Serverless 글로벌 CDN 정적 호스팅 ([https://sillok.tsar.kr](https://sillok.tsar.kr))
+2. **비공개 고정 백엔드**: Cloudflare Named Tunnel 공식 토큰을 바인딩한 내부 백엔드 파이프라인 (Vercel Serverless가 안전하게 중계 호출하여 백엔드 직접 노출 차단)
 3. **추론 연산**: 구글 코랩 NVIDIA L4 GPU 상에서 Hugging Face 포맷 모델 즉시 가동 (FP16 추론)
 4. **24시간 무인 자율 복구 데몬 (`sillok-healer.service`)**: 로컬 PC 백그라운드에서 90초마다 상태를 점검하며, 코랩 세션 만료 시 원격으로 L4 GPU 서버와 고정 터널을 자동 복구 (미니 PC RAM 2MB, CPU 0%)
 
