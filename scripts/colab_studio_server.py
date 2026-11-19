@@ -416,7 +416,9 @@ def interpret_story(king, date, subject, title, generated):
 
 def get_train_350m_status() -> dict:
     running = bool(
-        os.popen("pgrep -f '14_train_with_hf_sync.py|04_pretrain.py'").read().strip()
+        os.popen("pgrep -f 14_train_with_hf_sync.py || pgrep -f 04_pretrain.py")
+        .read()
+        .strip()
     )
     last_line = ""
     if os.path.exists("/content/train_350m.log"):
