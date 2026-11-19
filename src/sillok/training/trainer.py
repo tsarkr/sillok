@@ -125,7 +125,7 @@ class SillokPretrainer:
         }
         dtype = mapping.get(dtype_name.lower(), torch.float32)
         if dtype == torch.bfloat16 and self.device.type == "cuda":
-            if not torch.cuda.is_bf16_supported():
+            if not torch.cuda.is_bf16_supported() or torch.cuda.get_device_capability()[0] < 8:
                 return torch.float16
         if self.device.type == "cpu" and dtype == torch.float16:
             return torch.float32

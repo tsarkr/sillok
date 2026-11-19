@@ -72,6 +72,9 @@ def main() -> None:
     token = os.environ.get("HF_TOKEN")
     if not token:
         sys.exit("HF_TOKEN is required")
+    if not torch.cuda.is_available():
+        log("CUDA GPU not available on this runtime; deferring pretraining until a GPU runtime is active.")
+        return
     api = HfApi(token=token)
     api.create_repo(args.repo_id, private=True, exist_ok=True)
 
@@ -99,7 +102,10 @@ def main() -> None:
     cmd = [sys.executable, "-u", "scripts/04_pretrain.py", "--config", str(args.config)]
     if args.no_compile:
         cmd.append("--no-compile")
-    proc = subprocess.Popen(cmd, env=dict(os.environ, PYTHONUNBUFFERED="1"))
+    child_env = dict(os.environ, PYTHONUNBUFFERED="1")
+    src_path = str(Path.cwd() / "src")
+    child_env["PYTHONPATH"] = f"{src_path}:{child_env['PYTHONPATH']}" if child_env.get("PYTHONPATH") else src_path
+    proc = subprocess.Popen(cmd, env=child_env)
     log(f"pretraining started (pid {proc.pid})")
 
     uploaded_step: str | None = None
