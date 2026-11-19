@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
 import sqlite3
 import time
 from pathlib import Path
@@ -20,6 +21,9 @@ def open_jsonl(path: Path):
 def build_db(input_path: Path, output_db: Path, batch_size: int = 10000) -> None:
     t0 = time.perf_counter()
     output_db.parent.mkdir(parents=True, exist_ok=True)
+    final_db = output_db
+    # Build into a temp file and atomically rename, so a live server never sees a half-built DB.
+    output_db = final_db.with_name(final_db.name + ".tmp")
     if output_db.exists():
         output_db.unlink()
 
@@ -123,10 +127,11 @@ def build_db(input_path: Path, output_db: Path, batch_size: int = 10000) -> None
     conn.execute("INSERT INTO articles_fts(articles_fts) VALUES('optimize');")
     conn.commit()
     conn.close()
+    os.replace(output_db, final_db)
 
     elapsed = time.perf_counter() - t0
-    size_mb = output_db.stat().st_size / (1024 * 1024)
-    print(f"[index] Done! Built {output_db} ({size_mb:.1f} MB) in {elapsed:.1f}s", flush=True)
+    size_mb = final_db.stat().st_size / (1024 * 1024)
+    print(f"[index] Done! Built {final_db} ({size_mb:.1f} MB) in {elapsed:.1f}s", flush=True)
 
 
 def main() -> None:
