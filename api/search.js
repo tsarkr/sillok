@@ -24,12 +24,19 @@ export default async function handler(req, res) {
       body: isPost ? (typeof req.body === 'string' ? req.body : JSON.stringify(req.body)) : undefined,
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      return res.status(503).json({
+        error: `실록 백엔드 서버가 자동 복구(재기동) 중입니다 (HTTP ${response.status}). 약 30~40초 후 다시 검색해 주세요.`,
+      });
+    }
     return res.status(response.status).json(data);
   } catch (error) {
     return res.status(502).json({
-      error: `Failed to connect to Sillok archive search engine: ${error.message}`,
-      hint: 'Ensure the Sillok backend engine is online.',
+      error: `실록 백엔드 서버 연결 실패: ${error.message}. 잠시 후 다시 시도해 주세요.`,
     });
   }
 }
