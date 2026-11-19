@@ -414,6 +414,22 @@ def interpret_story(king, date, subject, title, generated):
     return story, sagwan, extract_glossary(title + " " + generated, limit=4)
 
 
+def get_train_350m_status() -> dict:
+    running = bool(
+        os.popen("pgrep -f '14_train_with_hf_sync.py|04_pretrain.py'").read().strip()
+    )
+    last_line = ""
+    if os.path.exists("/content/train_350m.log"):
+        try:
+            with open("/content/train_350m.log", "r", encoding="utf-8", errors="ignore") as f:
+                lines = [ln.strip() for ln in f.readlines() if ln.strip()]
+                if lines:
+                    last_line = lines[-1]
+        except Exception:
+            pass
+    return {"train_350m_running": running, "train_350m_last_log": last_line}
+
+
 class StudioHandler(BaseHTTPRequestHandler):
     def end_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -446,6 +462,7 @@ class StudioHandler(BaseHTTPRequestHandler):
                 "supported_kings": 30,
                 "status": "ready",
                 **DB_STATS_CACHE,
+                **get_train_350m_status(),
             }
             self._send_json(200, data)
         elif parsed.path == "/api/search":
