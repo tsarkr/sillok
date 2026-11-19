@@ -1,4 +1,5 @@
 import os, sys, time, json, re, sqlite3, urllib.parse, threading
+from pathlib import Path
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from collections import Counter
 import torch
@@ -415,11 +416,18 @@ def interpret_story(king, date, subject, title, generated):
 
 
 def get_train_350m_status() -> dict:
-    running = bool(
-        os.popen("pgrep -f 14_train_with_hf_sync.py || pgrep -f 04_pretrain.py")
-        .read()
-        .strip()
-    )
+    running = False
+    my_pid = str(os.getpid())
+    for p in Path("/proc").glob("[0-9]*"):
+        if p.name == my_pid:
+            continue
+        try:
+            cmd = (p / "cmdline").read_bytes().decode("utf-8", "ignore")
+            if ("14_train_with_hf_sync" in cmd or "04_pretrain.py" in cmd) and "python" in cmd:
+                running = True
+                break
+        except Exception:
+            pass
     last_line = ""
     if os.path.exists("/content/train_350m.log"):
         try:
