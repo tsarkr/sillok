@@ -8,7 +8,7 @@
 
 | 구분 | 문서 | 내용 안내 |
 | :---: | :--- | :--- |
-| **교재 통합본** | [BOOK_SILLOK_LM_COMPLETE.md](file:///home/nsua/Dev/sillok/docs/BOOK_SILLOK_LM_COMPLETE.md) | **실록 모델의 목적·쓰임·방향성, 소스 코드 줄 단위 심층 해설, 정량·정성 평가 방법론, 모델 실행환경(디지털 춘추관) 및 무인 자동화 전 과정을 집대성한 단행본 원고 (6.1만 자, 1,358행)** |
+| **교재 통합본** | [BOOK_SILLOK_LM_COMPLETE.md](file:///home/nsua/Dev/sillok/docs/BOOK_SILLOK_LM_COMPLETE.md) | **실록 모델의 목적·쓰임·방향성, 소스 코드 줄 단위 심층 해설, 팩트 기반 SQLite FTS5 검색 엔진과 RAG 결합 아키텍처, 모델 실행환경(디지털 춘추관) 및 무인 자동화 전 과정을 집대성한 단행본 원고 (6.8만 자, 1,505행)** |
 | **서문 / 색인** | [00_BOOK_INDEX.md](file:///home/nsua/Dev/sillok/docs/00_BOOK_INDEX.md) | 프로젝트 개요, 실측 통계 요약 및 전체 파일 목록 |
 | **제1장** | [01_DATA_AND_XML_SPEC.md](file:///home/nsua/Dev/sillok/docs/01_DATA_AND_XML_SPEC.md) | 원천 XML(`history.dtd ver 1.4`) 스키마, 673개 파일·381,701개 기사 전수 통계, UTF-16 서로게이트 복구 및 계층 날짜 상속 규격 |
 | **제2장** | [02_SYSTEM_AND_REMOTE_ARCHITECTURE.md](file:///home/nsua/Dev/sillok/docs/02_SYSTEM_AND_REMOTE_ARCHITECTURE.md) | 에지 호스트 `tsarkr`(`Celeron J3160`, `3.7 GiB RAM`), `sshd`/`.vscode-server`/`cloudflared` 프로세스 토폴로지, 저메모리 스트리밍 및 원격 Colab 연동 구조 |
@@ -50,6 +50,7 @@
 | **학습/생성** | [src/sillok/training/trainer.py](file:///home/nsua/Dev/sillok/src/sillok/training/trainer.py), [generate.py](file:///home/nsua/Dev/sillok/src/sillok/training/generate.py) | `bfloat16` AMP, TF32, `torch.compile`, 자동 재개 및 생성기 |
 | **원격 연동** | [src/sillok/remote/colab_env.py](file:///home/nsua/Dev/sillok/src/sillok/remote/colab_env.py) | 호스트/Colab 진단, Cloudflare 터널 다운로드, Drive 심볼릭 링크 |
 | **CLI 및 실행환경** | [scripts/01_parse_xml.py](file:///home/nsua/Dev/sillok/scripts/01_parse_xml.py) ~ [11_serve_web_studio.py](file:///home/nsua/Dev/sillok/scripts/11_serve_web_studio.py), [evaluate.py](file:///home/nsua/Dev/sillok/scripts/evaluate.py) | 파싱, 토크나이저, Memmap, 학습, 추론, 정량 평가(PPL/Top-k), 경량 모델 추출, 대화형 터미널, 디지털 춘추관 웹 스튜디오(:8020) |
+| **검색 & 동기화** | [scripts/13_build_search_db.py](file:///home/nsua/Dev/sillok/scripts/13_build_search_db.py), [14_train_with_hf_sync.py](file:///home/nsua/Dev/sillok/scripts/14_train_with_hf_sync.py) | 381,701건 SQLite FTS5 전문 검색 색인 빌더 및 Colab 런타임 휘발 대비 Hugging Face 체크포인트 동기화 러너 |
 | **원격 노트북/작업** | [notebooks/colab_remote_runner.ipynb](file:///home/nsua/Dev/sillok/notebooks/colab_remote_runner.ipynb), [configs/colab_job.json](file:///home/nsua/Dev/sillok/configs/colab_job.json) | 로컬 IDE ↔ Colab 원격 커널 실행기 및 `/job.json` 작업 명세 |
 | **공용 GPU 브리지** | `/home/nsua/colab-gpu-bridge/` (`colab_gpu_server.py`, `colab_oauth.py`, `colab_mcp_proxy.py`, `colab_t4_supervisor.py`) | 범용 GPU 작업 큐, Colab OAuth/MCP 프록시, 3분 주기 무인 감독 및 청크 백업 데몬 |
 | **단위 테스트** | [tests/test_pipeline.py](file:///home/nsua/Dev/sillok/tests/test_pipeline.py) | 로컬 무의존 테스트 및 Colab PyTorch 통합 테스트 |
