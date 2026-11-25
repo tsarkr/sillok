@@ -6,6 +6,7 @@ import importlib.util
 import random
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from sillok.constants import DATASET_INFO, KING_CODE_MAP
@@ -90,11 +91,13 @@ class TestSillokStandardPipeline(unittest.TestCase):
     def test_yaml_configs_and_parameter_estimates(self) -> None:
         tiny = SillokLMConfig.from_yaml(CONFIG_DIR / "sillok_tiny_debug.yaml")
         m350 = SillokLMConfig.from_yaml(CONFIG_DIR / "sillok_350m_a100.yaml")
+        m350_mac = SillokLMConfig.from_yaml(CONFIG_DIR / "sillok_350m_mac_mps.yaml")
         m1b = SillokLMConfig.from_yaml(CONFIG_DIR / "sillok_1b_a100.yaml")
 
         self.assertLess(tiny.estimate_num_parameters(), 10_000_000)
         self.assertGreater(m350.estimate_num_parameters(), 300_000_000)
         self.assertLess(m350.estimate_num_parameters(), 400_000_000)
+        self.assertEqual(m350.estimate_num_parameters(), m350_mac.estimate_num_parameters())
         self.assertGreater(m1b.estimate_num_parameters(), 950_000_000)
         self.assertLess(m1b.estimate_num_parameters(), 1_150_000_000)
 
@@ -104,6 +107,8 @@ class TestSillokStandardPipeline(unittest.TestCase):
         self.assertIn("Runtime Mode", report)
         self.assertIn("System Memory", report)
         self.assertIn("Host Services", report)
+        if info.mps_available:
+            self.assertIn("MPS / GPU", report)
         self.assertGreater(info.cpu_count, 0)
 
     def test_dataset_provenance_constants(self) -> None:
@@ -181,6 +186,16 @@ class TestSillokPyTorchModel(unittest.TestCase):
         out = model.generate(input_ids[:, :4], max_new_tokens=6, temperature=0.8)
         self.assertEqual(out.shape[0], 2)
         self.assertLessEqual(out.shape[1], 10)
+
+    def test_training_device_prefers_mps_when_cuda_is_unavailable(self) -> None:
+        import torch
+        from sillok.training.trainer import _select_device
+
+        with (
+            mock.patch("torch.cuda.is_available", return_value=False),
+            mock.patch("torch.backends.mps.is_available", return_value=True),
+        ):
+            self.assertEqual(_select_device(), torch.device("mps"))
 
 
 @unittest.skipUnless(

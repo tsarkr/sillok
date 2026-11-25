@@ -68,6 +68,14 @@ def _unwrap_model(model: torch.nn.Module) -> SillokForCausalLM:
     return getattr(model, "_orig_mod", model)
 
 
+def _select_device() -> torch.device:
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
 class SillokPretrainer:
     """Manages from-scratch pretraining, evaluation, and checkpointing."""
 
@@ -82,14 +90,14 @@ class SillokPretrainer:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self._seed_everything(train_config.seed)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = _select_device()
 
         if self.device.type == "cuda":
             torch.backends.cuda.matmul.allow_tf32 = True
             torch.backends.cudnn.allow_tf32 = True
 
         self.amp_dtype = self._resolve_amp_dtype(train_config.dtype)
-        self.use_amp = self.device.type == "cuda" and self.amp_dtype != torch.float32
+        self.use_amp = self.device.type in {"cuda", "mps"} and self.amp_dtype != torch.float32
         self.scaler = torch.amp.GradScaler(
             "cuda", enabled=(self.device.type == "cuda" and self.amp_dtype == torch.float16)
         )

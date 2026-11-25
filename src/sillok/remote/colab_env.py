@@ -44,6 +44,7 @@ class RuntimeInfo:
     mem_available_gb: float
     torch_installed: bool
     cuda_available: bool
+    mps_available: bool
     gpu_name: str
     gpu_vram_gb: float
     bf16_supported: bool
@@ -54,6 +55,25 @@ class RuntimeInfo:
 
 
 def _read_proc_meminfo() -> tuple[float, float]:
+    if sys.platform == "darwin":
+        try:
+            page_size = os.sysconf("SC_PAGE_SIZE")
+            total_pages = os.sysconf("SC_PHYS_PAGES")
+            vm_stats = subprocess.check_output(
+                ["vm_stat"], text=True, stderr=subprocess.DEVNULL
+            )
+            available_pages = 0
+            for label in ("Pages free:", "Pages inactive:", "Pages speculative:", "Pages purgeable:"):
+                match = re.search(rf"^{re.escape(label)}\s+(\d+)\.", vm_stats, re.MULTILINE)
+                if match:
+                    available_pages += int(match.group(1))
+            return (
+                round(total_pages * page_size / (1024**3), 2),
+                round(available_pages * page_size / (1024**3), 2),
+            )
+        except (OSError, ValueError, subprocess.SubprocessError):
+            return 0.0, 0.0
+
     meminfo = Path("/proc/meminfo")
     if not meminfo.exists():
         return 0.0, 0.0
@@ -166,6 +186,7 @@ def detect_runtime() -> RuntimeInfo:
 
     torch_installed = False
     cuda_available = False
+    mps_available = False
     gpu_name = "none"
     gpu_vram_gb = 0.0
     bf16_supported = False
@@ -175,6 +196,8 @@ def detect_runtime() -> RuntimeInfo:
 
         torch_installed = True
         cuda_available = bool(torch.cuda.is_available())
+        mps_backend = getattr(torch.backends, "mps", None)
+        mps_available = bool(mps_backend is not None and mps_backend.is_available())
         if cuda_available:
             props = torch.cuda.get_device_properties(0)
             gpu_name = props.name
@@ -194,6 +217,7 @@ def detect_runtime() -> RuntimeInfo:
         mem_available_gb=mem_avail_gb,
         torch_installed=torch_installed,
         cuda_available=cuda_available,
+        mps_available=mps_available,
         gpu_name=gpu_name,
         gpu_vram_gb=gpu_vram_gb,
         bf16_supported=bf16_supported,
@@ -219,6 +243,8 @@ def format_runtime_report(info: RuntimeInfo | None = None) -> str:
         f"PyTorch         : {'installed' if snap.torch_installed else 'not installed'}",
         f"CUDA / GPU      : {snap.gpu_name} ({snap.gpu_vram_gb:.2f} GB, bf16={snap.bf16_supported})"
         if snap.cuda_available
+        else "MPS / GPU       : Apple Silicon (unified memory)"
+        if snap.mps_available
         else "CUDA / GPU      : unavailable",
         f"Host Services   : sshd={procs.has_sshd}, vscode-server={procs.has_vscode_server}, cloudflared={tunnel_desc}",
         f"Google Drive    : {snap.drive_mount_root}"

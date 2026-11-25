@@ -38,7 +38,7 @@
   - 당일 첫 기사에만 60간지를 적는 실록 원전의 관례를 반영해 `level2(년) ➔ level3(월) ➔ level4(일) ➔ level5(기사)` DOM 계층 상속 파서를 구현했습니다.
 - **모델 라인업**:
   - **Sillok-100M** (`100.7M` params, 12L/768H): Hugging Face 공개 완료 (`darkstar-11e/sillok-100m`), 웹 스튜디오의 보조 탭 `AI 사관 원문 생성 실험실`에서 실시간 체험 가능.
-  - **Sillok-350M** (`347.1M` params, 26L/1024H, GQA 16:4, BFloat16): Google Colab 클라우드 GPU에서 사전학습 진행 중 (`configs/sillok_350m_l4.yaml`, Step 1,250 가중치 Hugging Face 실시간 백업 연동).
+  - **Sillok-350M** (`347.1M` params, 26L/1024H, GQA 16:4, BFloat16): NVIDIA L4와 Apple Silicon MPS에서 학습 가능 (`configs/sillok_350m_l4.yaml`, `configs/sillok_350m_mac_mps.yaml`).
 
 ### 4. 🤝 사서(司書)와 사관(史官)의 만남: SQLite 검색과 언어모델의 상호보완적 결합
 - **SQLite FTS5 (사서의 역할)**: 381,701건의 실록 서고에서 실제 사료를 0.02초(20ms) 만에 정확히 찾아내어 환각(할루시네이션)을 0%로 원천 차단합니다.
@@ -91,6 +91,7 @@ sillok/
 │   ├── sillok_tiny_debug.yaml      # 스모크 테스트용 설정 (5M params)
 │   ├── sillok_120m_t4.yaml         # 실전 표준 모델 설정 (100.7M params)
 │   ├── sillok_350m_l4.yaml         # NVIDIA L4 24GB 최적화 확장 모델 설정 (347.1M params)
+│   ├── sillok_350m_mac_mps.yaml    # Apple Silicon MPS 학습 설정
 │   └── sillok_1b_a100.yaml         # 1B 스케일 확장 모델 설정
 ├── data/
 │   ├── 2nd_*.xml                   # 교육부 국사편찬위원회 실록 원문 XML (673개 파일)
@@ -156,6 +157,11 @@ pip install -e .
 
 # Build the 381,701-article SQLite FTS5 search database
 python3 scripts/13_build_search_db.py --input data/processed/articles.jsonl --output data/processed/sillok_search.db
+```
+
+### Apple Silicon 350M Training
+```bash
+.venv/bin/python scripts/04_pretrain.py --config configs/sillok_350m_mac_mps.yaml
 ```
 
 ### 2. Hugging Face Inference (`Sillok-100M`)
