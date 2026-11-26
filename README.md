@@ -1,7 +1,8 @@
 # Sillok-LM & 디지털 춘추관: 조선왕조실록 AI 역사 탐서관
 ### Historical Archive Explorer & From-Scratch Causal Language Model for the Annals of the Joseon Dynasty
 
-[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-darkstar--11e%2Fsillok--100m-yellow)](https://huggingface.co/darkstar-11e/sillok-100m)
+[![Hugging Face 100M](https://img.shields.io/badge/%F0%9F%A4%97%20HF%20100M-darkstar--11e%2Fsillok--100m-yellow)](https://huggingface.co/darkstar-11e/sillok-100m)
+[![Hugging Face 350M](https://img.shields.io/badge/%F0%9F%A4%97%20HF%20350M-darkstar--11e%2Fsillok--350m-6f42c1)](https://huggingface.co/darkstar-11e/sillok-350m)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![GitHub](https://img.shields.io/badge/GitHub-tsarkr%2Fsillok-black)](https://github.com/tsarkr/sillok)
 [![Live Studio](https://img.shields.io/badge/Live%20Explorer-sillok.tsar.kr-7c2d12)](https://sillok.tsar.kr)
@@ -9,7 +10,9 @@
 > **[ 🌐 English Documentation ](#-english-documentation)** | **[ 🇰🇷 한국어 설명 ](#-한국어-설명)**
 
 * **공식 웹 역사 탐서관 (Official Historical Explorer)**: [https://sillok.tsar.kr](https://sillok.tsar.kr) (Mirror: [https://sillok-blue.vercel.app/](https://sillok-blue.vercel.app/))
-* **Hugging Face 모델 허브 (Model Hub)**: [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (`LlamaForCausalLM` safetensors · 350M 상위 모델 사전학습 진행 중)
+* **Hugging Face 모델 허브 (Model Hub)**:
+  * **Sillok-LM 100M** (`100.7M`): [https://huggingface.co/darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (`LlamaForCausalLM` safetensors · Val Loss `2.9128`, PPL `18.41`)
+  * **Sillok-LM 350M** (`347.1M`): [https://huggingface.co/darkstar-11e/sillok-350m](https://huggingface.co/darkstar-11e/sillok-350m) (`LlamaForCausalLM` safetensors · Step `5,000` 연구 체크포인트, Val Loss `3.2509`, PPL `25.81`)
 * **원천 데이터셋 (Primary Source)**: `교육부 국사편찬위원회_조선왕조실록 정보_실록원문_20260821` (`data/2nd_*.xml`, `673` files · `30` annals · `381,701` articles · `67,707,578` Classical Chinese characters · KOGL Type 1 / AI License)
 
 ---
@@ -36,9 +39,14 @@
 - **엄격한 역사 고증 및 XML 계층 파싱**:
   - 한글 기사 제목(`<mainTitle>`)은 조선 목판본 원전에 없던 국사편찬위원회 연구진의 현대어 1줄 요약문임을 명시하고 분리 모델링했습니다.
   - 당일 첫 기사에만 60간지를 적는 실록 원전의 관례를 반영해 `level2(년) ➔ level3(월) ➔ level4(일) ➔ level5(기사)` DOM 계층 상속 파서를 구현했습니다.
-- **모델 라인업**:
-  - **Sillok-100M** (`100.7M` params, 12L/768H): Hugging Face 공개 완료 (`darkstar-11e/sillok-100m`), 웹 스튜디오의 보조 탭 `AI 사관 원문 생성 실험실`에서 실시간 체험 가능.
-  - **Sillok-350M** (`347.1M` params, 26L/1024H, GQA 16:4, BFloat16): NVIDIA L4와 Apple Silicon MPS에서 학습 가능 (`configs/sillok_350m_l4.yaml`, `configs/sillok_350m_mac_mps.yaml`).
+- **모델 라인업 (Hugging Face 공개 완료)**:
+  - **Sillok-100M** (`100,682,496` params, `12L / 768H / 2,048 FFN`, GQA `12:4`): [darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) — `4,400` steps (~760M tokens, Val Loss `2.9128`, PPL `18.41`), 웹 스튜디오의 보조 탭 `AI 사관 원문 생성 실험실`에서 실시간 체험 가능.
+  - **Sillok-350M** (`347,132,928` params, `26L / 1,024H / 3,072 FFN`, GQA `16:4`): [darkstar-11e/sillok-350m](https://huggingface.co/darkstar-11e/sillok-350m) — Apple M5 Pro (`PyTorch 2.15.0 MPS`, `BF16` autocast)에서 `5,000` steps (`40,960,000` nominal token positions, Val Loss `3.2509`, PPL `25.81`) 학습된 연구용 체크포인트 (`FP16` safetensors 공개, NVIDIA L4 및 Apple Silicon MPS 설정 `configs/sillok_350m_l4.yaml`, `configs/sillok_350m_mac_mps.yaml` 제공).
+
+| 모델 | 파라미터 | 레이어 / 히든 / FFN | Attention (Q / KV) | 학습 스텝 및 토큰 | Val Loss (PPL) | 비고 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| [**Sillok-LM 100M**](https://huggingface.co/darkstar-11e/sillok-100m) | `100.7M` | `12 / 768 / 2,048` | `12 / 4` | `4,400` steps (~760M tokens) | `2.9128` (`18.41`) | 경량 기준 모델 (다중 에포크) |
+| [**Sillok-LM 350M**](https://huggingface.co/darkstar-11e/sillok-350m) | `347.1M` | `26 / 1,024 / 3,072` | `16 / 4` | `5,000` steps (`40.96M` nominal token positions) | `3.2509` (`25.81`) | 350M 확장 연구 체크포인트 (Apple Silicon MPS) |
 
 ### 4. 🤝 사서(司書)와 사관(史官)의 만남: SQLite 검색과 언어모델의 상호보완적 결합
 - **SQLite FTS5 (사서의 역할)**: 381,701건의 실록 서고에서 실제 사료를 0.02초(20ms) 만에 정확히 찾아내어 환각(할루시네이션)을 0%로 원천 차단합니다.
@@ -137,8 +145,13 @@ It combines:
 - **Student & Public Accessibility**: Native HTML `<ruby>` phonetic annotations above Classical Chinese characters and automatic glossary badges for premodern government offices (*Uijeongbu*, *Seungjeongwon*, *Uigeumbu*, etc.).
 
 ### 3. From-Scratch Sillok-LM Model Family
-- **Sillok-100M (`100.7M` params)**: Published on Hugging Face (`darkstar-11e/sillok-100m`) in standard `LlamaForCausalLM` safetensors format.
-- **Sillok-350M (`347.1M` params, 26 layers, 1024 hidden, GQA 16:4, BFloat16)**: Currently pretraining on Google Colab GPU (`configs/sillok_350m_l4.yaml`, Step 1,250 checkpoint synchronized to Hugging Face).
+- **Sillok-100M (`100.7M` params)**: Published on Hugging Face ([`darkstar-11e/sillok-100m`](https://huggingface.co/darkstar-11e/sillok-100m)) in standard `LlamaForCausalLM` safetensors format (`4,400` steps, ~760M tokens, Val Loss `2.9128`, PPL `18.41`).
+- **Sillok-350M (`347.1M` params)**: Published on Hugging Face ([`darkstar-11e/sillok-350m`](https://huggingface.co/darkstar-11e/sillok-350m)) in `FP16` `LlamaForCausalLM` safetensors format — `26` layers, `1,024` hidden dim, `3,072` intermediate dim, GQA `16:4`, trained for `5,000` steps (`40,960,000` nominal token positions) on Apple M5 Pro (`PyTorch 2.15.0 MPS`, `BF16` autocast; Val Loss `3.2509`, PPL `25.81`). Training configs are provided for both NVIDIA L4 (`configs/sillok_350m_l4.yaml`) and Apple Silicon MPS (`configs/sillok_350m_mac_mps.yaml`).
+
+| Model | Parameters | Layers / Hidden / FFN | Heads (Q / KV) | Training Steps & Tokens | Val Loss (PPL) | Notes |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| [**Sillok-LM 100M**](https://huggingface.co/darkstar-11e/sillok-100m) | `100.7M` | `12 / 768 / 2,048` | `12 / 4` | `4,400` steps (~760M tokens) | `2.9128` (`18.41`) | Compact baseline, multi-epoch |
+| [**Sillok-LM 350M**](https://huggingface.co/darkstar-11e/sillok-350m) | `347.1M` | `26 / 1,024 / 3,072` | `16 / 4` | `5,000` steps (`40.96M` nominal token positions) | `3.2509` (`25.81`) | Scaled 350M research checkpoint (Apple Silicon MPS) |
 
 ### 4. 🤝 The Scribe and the Chronicler: Synergy of SQLite Search and Sillok-LM
 - **SQLite FTS5 (The Scribe/Librarian)**: Instantly retrieves authentic primary-source articles from all 381,701 entries in ~20ms, eliminating hallucination entirely.
@@ -164,18 +177,36 @@ python3 scripts/13_build_search_db.py --input data/processed/articles.jsonl --ou
 .venv/bin/python scripts/04_pretrain.py --config configs/sillok_350m_mac_mps.yaml
 ```
 
-### 2. Hugging Face Inference (`Sillok-100M`)
+### 2. Hugging Face Inference (`Sillok-350M` / `Sillok-100M`)
 ```python
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-model_id = "darkstar-11e/sillok-100m"
+model_id = "darkstar-11e/sillok-350m"  # or "darkstar-11e/sillok-100m"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="auto")
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    torch_dtype=torch.float16,
+    device_map="auto",
+)
 
-prompt = "<|bos|><|king|>세종실록(世宗實錄)<|date|>세종 28년 9월 29일 | 庚戌<|subject|>문화-출판/인쇄<|title|>어제 훈민정음 서책을 완성하여 인쇄하게 하다<|hanja|>"
+prompt = (
+    "<|bos|><|king|>세종실록(世宗實錄)"
+    "<|date|>세종 28년 9월 29일 | 庚戌"
+    "<|subject|>문화-출판/인쇄"
+    "<|title|>어제 훈민정음 서책을 완성하여 인쇄하게 하다"
+    "<|hanja|>"
+)
 inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-outputs = model.generate(**inputs, max_new_tokens=60, temperature=0.6, repetition_penalty=1.15)
+with torch.no_grad():
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=80,
+        temperature=0.6,
+        top_p=0.9,
+        repetition_penalty=1.15,
+        do_sample=True,
+    )
 print(tokenizer.decode(outputs[0], skip_special_tokens=False))
 ```
 
@@ -185,4 +216,15 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=False))
 
 - **Source Code**: [Apache License 2.0](LICENSE)
 - **Primary Source Data**: National Institute of Korean History (NIKH), Ministry of Education, Republic of Korea (KOGL Type 1 & AI Compliant)
-- **Model Checkpoints**: [darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (Apache-2.0)
+- **Model Checkpoints**:
+  - [darkstar-11e/sillok-100m](https://huggingface.co/darkstar-11e/sillok-100m) (Apache-2.0)
+  - [darkstar-11e/sillok-350m](https://huggingface.co/darkstar-11e/sillok-350m) (Apache-2.0)
+
+```bibtex
+@misc{sillok-lm-350m,
+  title  = {Sillok-LM 350M: Causal Language Model for the Annals of the Joseon Dynasty},
+  author = {Jo, Gyungmin},
+  year   = {2026},
+  url    = {https://huggingface.co/darkstar-11e/sillok-350m}
+}
+```
